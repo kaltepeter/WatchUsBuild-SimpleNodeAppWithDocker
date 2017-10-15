@@ -3,6 +3,21 @@
 # remove any existing containers
 docker container prune -f
 
-# build the image and run the container
-docker build -t voting-app .
-docker container run -it -p 8888:8888 -v ~/Desktop/DOCKER/wub1/WatchUsBuild-SimpleNodeAppWithDocker/src:/usr/src/app/src voting-app
+CURDIR=$(pwd)
+echo "$CURDIR is root dir..."
+
+echo "build and run nginx"
+cd nginx && ./run.sh
+cd "$CURDIR"
+echo "build and run postgres"
+cd postgres && ./run.sh
+cd "$CURDIR"
+echo "build and run node" 
+cd node && ./run.sh
+cd "$CURDIR"
+
+
+docker container ls
+./wait-for-postgres.sh
+echo "restart node"
+./restart-node.sh
